@@ -18,6 +18,6 @@ interface ContactsDAO {
     fun updateUser(user: SignUpModel)
 
     @Query("Select * from SignUpModel Where phoneNumber like (:number)")
-    fun getUserProfile(number: String): SignUpModel
+    fun getUserProfile(number: String): SignUpModel?
 
 }

@@ -38,10 +38,10 @@ class SignUpActivity : AppCompatActivity() {
             val number = PreferenceManager.getDefaultSharedPreferences(this@SignUpActivity).getString("number", "")
             val model = AppDatabase.getInstance(this@SignUpActivity).contactsDAO().getUserProfile(number)
             uiThread {
-                etName.setText(model.name)
-                etGender.setText(model.gender)
-                etEmail.setText(model.email)
-                etNumber.setText(model.phoneNumber)
+                etName.setText(model?.name)
+                etGender.setText(model?.gender)
+                etEmail.setText(model?.email)
+                etNumber.setText(model?.phoneNumber)
                 textInputLayout2.isEnabled = false
             }
         }
@@ -53,7 +53,8 @@ class SignUpActivity : AppCompatActivity() {
                 val model = SignUpModel(
                         etName.text.toString(), etNumber.text.toString(), etEmail.text.toString(),
                         etGender.text.toString(), etPassword.text.toString())
-                saveUser(model)
+
+                signUp(model)
             }
         }
 
@@ -63,6 +64,18 @@ class SignUpActivity : AppCompatActivity() {
                         etName.text.toString(), etNumber.text.toString(), etEmail.text.toString(),
                         etGender.text.toString(), etPassword.text.toString())
                 updateUser(model)
+            }
+        }
+    }
+
+    private fun signUp(model: SignUpModel) {
+        doAsync {
+            val user = AppDatabase.getInstance(this@SignUpActivity)
+                    .contactsDAO().getUserProfile(model.phoneNumber)
+            uiThread {
+                if (user == null)
+                    saveUser(model)
+                else toast("This user already exists")
             }
         }
     }
